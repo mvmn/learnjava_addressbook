@@ -8,6 +8,7 @@ Welcome to Address Book
 Please choose command:
 1 - list
 2 - show
-3 - edit
-4 - delete
-5 - exit
+3 - add
+4 - edit
+5 - delete
+6 - exit

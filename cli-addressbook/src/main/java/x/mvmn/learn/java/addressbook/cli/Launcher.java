@@ -10,6 +10,8 @@ import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import x.mvmn.learn.java.addressbook.impl.model.MutableAddressImpl;
+import x.mvmn.learn.java.addressbook.impl.model.MutablePersonImpl;
 import x.mvmn.learn.java.addressbook.service.impl.file.AddressBookFileServiceImpl;
 
 public class Launcher {
@@ -50,8 +52,20 @@ public class Launcher {
 			case 2:
 			break;
 			case 3:
+				System.out.print("\nFirst name: ");
+				String fn = scanner.next();
+				System.out.print("\nLast name: ");
+				String ln = scanner.next();
+				System.out.print("\nMiddle name: ");
+				String mn = scanner.next();
+				System.out.print("\nPrefix name: ");
+				String pfx = scanner.next();
+				MutablePersonImpl person = MutablePersonImpl.builder().prefix(pfx).firstName(fn).middleName(mn).lastName(ln).build();
+				adbService.savePeron(person);
 			break;
 			case 4:
+			break;
+			case 5:
 				System.out.print("\nEnter ID of person to delete: ");
 				int id = scanner.nextInt();
 				if (adbService.deletePerson(id)) {
@@ -60,7 +74,7 @@ public class Launcher {
 					System.out.println("Person not found.");
 				}
 			break;
-			case 5:
+			case 6:
 				return true;
 			default:
 		}
