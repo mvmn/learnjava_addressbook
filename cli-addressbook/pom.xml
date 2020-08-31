@@ -15,7 +15,7 @@
 	<artifactId>cli-addressbook</artifactId>
 
 	<properties>
-		<main.class>x.mvmn.learn.java.addressbook.cli.Lanuncher</main.class>
+		<main.class>x.mvmn.learn.java.addressbook.cli.AddressBook</main.class>
 	</properties>
 
 	<dependencies>
@@ -23,6 +23,12 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>addressbook-service-file</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.12</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

@@ -1,6 +1,8 @@
 package x.mvmn.learn.java.addressbook.api.model;
 
 public interface Address {
+	public long getId();
+	
 	public String getCountry();
 
 	public String getRegion();

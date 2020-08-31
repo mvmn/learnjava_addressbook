@@ -4,11 +4,3 @@
 |___|___||_____||_____||__| |_____|_____|_____| |______/|_____|_____||__|__|
 
 Welcome to Address Book
-
-Please choose command:
-1 - list
-2 - show
-3 - add
-4 - edit
-5 - delete
-6 - exit

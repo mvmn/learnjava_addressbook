@@ -13,4 +13,11 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+
+	<modules>
+		<module>addressbook-api</module>
+		<module>addressbook-model</module>
+		<module>addressbook-file-service</module>
+		<module>cli-addressbook</module>
+	</modules>
 </project>
