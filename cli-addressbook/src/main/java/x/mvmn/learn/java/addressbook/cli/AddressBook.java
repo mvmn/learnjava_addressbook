@@ -15,6 +15,7 @@ import x.mvmn.learn.java.addressbook.api.model.Person;
 import x.mvmn.learn.java.addressbook.cli.model.MenuDefinition;
 import x.mvmn.learn.java.addressbook.cli.model.MenuDefinition.MenuItem;
 import x.mvmn.learn.java.addressbook.impl.model.MutablePersonImpl;
+import x.mvmn.learn.java.addressbook.impl.model.MutablePhoneNumberImpl;
 import x.mvmn.learn.java.addressbook.service.impl.file.AddressBookFileServiceImpl;
 
 public class AddressBook {
@@ -129,6 +130,57 @@ public class AddressBook {
 			Person person = addressBookService.getPerson(personId).setPrefix(input);
 			addressBookService.savePerson(person);
 			System.out.println(renderPerson(person));
+			return false;
+		}));
+
+		List<MenuItem> phoneNumbersMenuItems = new ArrayList<>();
+		phoneNumbersMenuItems.add(new MenuItem("Done", ctx -> true));
+		phoneNumbersMenuItems.add(new MenuItem("List phone numbers", ctx -> {
+			long personId = (Long) ctx.getAttribute("personId");
+			addressBookService.getPhoneNumbers(personId).stream()
+					.map(pn -> " [" + pn.getId() + "] " + pn.getCountryCode() + "" + pn.getNumber()).forEach(System.out::println);
+			return false;
+		}));
+		phoneNumbersMenuItems.add(new MenuItem("Add phone number", ctx -> {
+			long personId = (Long) ctx.getAttribute("personId");
+			System.out.print("Enter phone number: ");
+			String input = ctx.getInput().nextLine();
+			if (!input.trim().isEmpty() && input.trim().matches("[0-9]+")) {
+				addressBookService.addPhoneNumber(personId, new MutablePhoneNumberImpl().setNumber(Long.parseLong(input.trim())));
+			} else {
+				System.out.println("Invalid phone number");
+			}
+
+			return false;
+		}));
+		phoneNumbersMenuItems.add(new MenuItem("Delete phone number", ctx -> {
+			long personId = (Long) ctx.getAttribute("personId");
+			addressBookService.getPhoneNumbers(personId).stream()
+					.map(pn -> " [" + pn.getId() + "] " + pn.getCountryCode() + "" + pn.getNumber()).forEach(System.out::println);
+			System.out.print("Enter phone number ID: ");
+			String input = ctx.getInput().nextLine();
+			if (input.trim().matches("[0-9]+")) {
+				long phoneNumberId = Long.parseLong(input.trim());
+				addressBookService.deletePhoneNumber(personId, phoneNumberId);
+			} else {
+				System.out.println("Invalid phone number ID");
+			}
+			return false;
+		}));
+		editPersonMenuItems.add(new MenuItem("Manage phone numbers", ctx -> {
+			boolean done = false;
+			do {
+				done = new MenuActionSubmenu(new MenuDefinition(phoneNumbersMenuItems)).perform(ctx);
+			} while (!done);
+			return false;
+		}));
+		List<MenuItem> addressesMenuItems = new ArrayList<>();
+		addressesMenuItems.add(new MenuItem("Done", ctx -> true));
+		editPersonMenuItems.add(new MenuItem("Manage addresses", ctx -> {
+			boolean done = false;
+			do {
+				done = new MenuActionSubmenu(new MenuDefinition(addressesMenuItems)).perform(ctx);
+			} while (!done);
 			return false;
 		}));
 

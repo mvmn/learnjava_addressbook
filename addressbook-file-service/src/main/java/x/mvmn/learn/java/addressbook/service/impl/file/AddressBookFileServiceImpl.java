@@ -2,7 +2,7 @@ package x.mvmn.learn.java.addressbook.service.impl.file;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,7 +37,7 @@ public class AddressBookFileServiceImpl implements AddressBookService {
 		this.fileExtension = fileExtension != null && !fileExtension.isEmpty() ? fileExtension : "adbk";
 	}
 
-	public Collection<MutablePersonImpl> listAllPersons() {
+	public List<MutablePersonImpl> listAllPersons() {
 		return Arrays.stream(storageDir.listFiles()).filter(File::isDirectory).filter(f -> f.getName().toLowerCase().startsWith("person_"))
 				.map(file -> new File(file, "person." + fileExtension)).map(this::parse).collect(Collectors.toList());
 	}
@@ -174,7 +174,7 @@ public class AddressBookFileServiceImpl implements AddressBookService {
 	}
 
 	@Override
-	public Collection<MutableAddressImpl> getAddresses(long personId) {
+	public List<MutableAddressImpl> getAddresses(long personId) {
 		return doWithPersonLock(personId,
 				id -> Arrays.stream(idToPersonDirFile(id).listFiles()).filter(File::isFile)
 						.filter(file -> file.getName().toUpperCase().startsWith(PersonSubEntityType.ADDRESS.name() + "_"))
@@ -228,7 +228,7 @@ public class AddressBookFileServiceImpl implements AddressBookService {
 	}
 
 	@Override
-	public Collection<MutablePhoneNumberImpl> getPhoneNumbers(long personId) {
+	public List<MutablePhoneNumberImpl> getPhoneNumbers(long personId) {
 		return doWithPersonLock(personId,
 				id -> Arrays.stream(idToPersonDirFile(id).listFiles()).filter(File::isFile)
 						.filter(file -> file.getName().toUpperCase().startsWith(PersonSubEntityType.PHONE.name() + "_"))

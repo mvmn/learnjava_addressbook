@@ -5,5 +5,5 @@ public interface PhoneNumber {
 
 	public int getCountryCode();
 
-	public int getNumber();
+	public long getNumber();
 }

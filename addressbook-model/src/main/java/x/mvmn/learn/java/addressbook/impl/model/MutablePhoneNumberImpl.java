@@ -15,5 +15,5 @@ import x.mvmn.learn.java.addressbook.api.model.PhoneNumber;
 public class MutablePhoneNumberImpl implements PhoneNumber, MutableEntity<MutablePhoneNumberImpl> {
 	protected long id;
 	protected int countryCode;
-	protected int number;
+	protected long number;
 }
