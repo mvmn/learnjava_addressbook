@@ -15,7 +15,7 @@ ehthumbs.db
 Thumbs.db
 
 ## Maven
-/target
+target/
 dependency-reduced-pom.xml
 
 ## JVM crash dumps
