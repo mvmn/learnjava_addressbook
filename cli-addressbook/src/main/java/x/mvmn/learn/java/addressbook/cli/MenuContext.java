@@ -25,4 +25,8 @@ public class MenuContext {
 	public Object getAttribute(String key) {
 		return attributes.get(key);
 	}
+
+	public void removeAttribute(String key) {
+		attributes.remove(key);
+	}
 }

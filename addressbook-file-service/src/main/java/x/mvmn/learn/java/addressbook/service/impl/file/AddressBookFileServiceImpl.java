@@ -37,12 +37,12 @@ public class AddressBookFileServiceImpl implements AddressBookService {
 		this.fileExtension = fileExtension != null && !fileExtension.isEmpty() ? fileExtension : "adbk";
 	}
 
-	public Collection<Person> listAllPersons() {
+	public Collection<MutablePersonImpl> listAllPersons() {
 		return Arrays.stream(storageDir.listFiles()).filter(File::isDirectory).filter(f -> f.getName().toLowerCase().startsWith("person_"))
 				.map(file -> new File(file, "person." + fileExtension)).map(this::parse).collect(Collectors.toList());
 	}
 
-	public Person getPerson(long id) {
+	public MutablePersonImpl getPerson(long id) {
 		return doWithPersonLock(id, personId -> {
 			File file = idToPersonFile(personId);
 			if (file.exists() && file.isFile()) {
@@ -174,7 +174,7 @@ public class AddressBookFileServiceImpl implements AddressBookService {
 	}
 
 	@Override
-	public Collection<? extends Address> getAddresses(long personId) {
+	public Collection<MutableAddressImpl> getAddresses(long personId) {
 		return doWithPersonLock(personId,
 				id -> Arrays.stream(idToPersonDirFile(id).listFiles()).filter(File::isFile)
 						.filter(file -> file.getName().toUpperCase().startsWith(PersonSubEntityType.ADDRESS.name() + "_"))
@@ -228,7 +228,7 @@ public class AddressBookFileServiceImpl implements AddressBookService {
 	}
 
 	@Override
-	public Collection<? extends PhoneNumber> getPhoneNumbers(long personId) {
+	public Collection<MutablePhoneNumberImpl> getPhoneNumbers(long personId) {
 		return doWithPersonLock(personId,
 				id -> Arrays.stream(idToPersonDirFile(id).listFiles()).filter(File::isFile)
 						.filter(file -> file.getName().toUpperCase().startsWith(PersonSubEntityType.PHONE.name() + "_"))

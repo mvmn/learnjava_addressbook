@@ -45,6 +45,116 @@ public class AddressBook {
 			addressBookService.listAllPersons().stream().map(this::renderPerson).map(v -> " " + v).forEach(System.out::println);
 			return false;
 		}));
+		menuItems.add(new MenuItem("Add person", ctx -> {
+			System.out.print("Enter person name: ");
+			String input = ctx.getInput().nextLine().trim();
+			if (!input.isEmpty()) {
+				String prefix = null;
+				if (input.matches("[a-zA-Z]+\\.")) {
+					int idxOfDot = input.indexOf(".");
+					prefix = input.substring(0, idxOfDot + 1);
+					input = input.substring(idxOfDot + 1).trim();
+				}
+				String firstName = null;
+				String middleName = null;
+				String lastName = input;
+				if (input.contains(" ")) {
+					int lastIdxOfSpace = input.lastIndexOf(" ");
+					lastName = input.substring(lastIdxOfSpace);
+					input = input.substring(0, lastIdxOfSpace).trim();
+				}
+				if (input.contains(" ")) {
+					int idxOfSpace = input.indexOf(" ");
+					middleName = input.substring(idxOfSpace);
+					firstName = input.substring(0, idxOfSpace);
+				} else {
+					firstName = input;
+				}
+				MutablePersonImpl person = MutablePersonImpl.builder().prefix(prefix).firstName(firstName).middleName(middleName)
+						.lastName(lastName).build();
+				long id = addressBookService.savePerson(person);
+				System.out.println("Person saved with ID " + id + ":\n " + renderPerson(person));
+			}
+			return false;
+		}));
+
+		List<MenuItem> editPersonMenuItems = new ArrayList<>();
+		editPersonMenuItems.add(new MenuItem("Done editing", ctx -> true));
+		editPersonMenuItems.add(new MenuItem("Change first name", ctx -> {
+			long personId = (Long) ctx.getAttribute("personId");
+			System.out.print("Enter value: ");
+			String input = ctx.getInput().nextLine();
+			if (!input.trim().isEmpty()) {
+				Person person = addressBookService.getPerson(personId).setFirstName(input.trim());
+				addressBookService.savePerson(person);
+				System.out.println(renderPerson(person));
+			}
+
+			return false;
+		}));
+		editPersonMenuItems.add(new MenuItem("Change last name", ctx -> {
+			long personId = (Long) ctx.getAttribute("personId");
+			System.out.print("Enter value: ");
+			String input = ctx.getInput().nextLine();
+			if (!input.trim().isEmpty()) {
+				Person person = addressBookService.getPerson(personId).setLastName(input.trim());
+				addressBookService.savePerson(person);
+				System.out.println(renderPerson(person));
+			}
+			return false;
+		}));
+		editPersonMenuItems.add(new MenuItem("Change middle name", ctx -> {
+			long personId = (Long) ctx.getAttribute("personId");
+			System.out.print("Enter value: ");
+			String input = ctx.getInput().nextLine();
+			if (input.trim().isEmpty()) {
+				input = null;
+			} else {
+				input = input.trim();
+			}
+			Person person = addressBookService.getPerson(personId).setMiddleName(input);
+			addressBookService.savePerson(person);
+			System.out.println(renderPerson(person));
+			return false;
+		}));
+		editPersonMenuItems.add(new MenuItem("Change prefix", ctx -> {
+			long personId = (Long) ctx.getAttribute("personId");
+			System.out.print("Enter value: ");
+			String input = ctx.getInput().nextLine();
+			if (input.trim().isEmpty()) {
+				input = null;
+			} else {
+				input = input.trim();
+			}
+			Person person = addressBookService.getPerson(personId).setPrefix(input);
+			addressBookService.savePerson(person);
+			System.out.println(renderPerson(person));
+			return false;
+		}));
+
+		menuItems.add(new MenuItem("Edit person", ctx -> {
+			addressBookService.listAllPersons().stream().map(this::renderPerson).map(v -> " " + v).forEach(System.out::println);
+			System.out.print("Enter person ID to edit: ");
+			String input = ctx.getInput().nextLine();
+			Person person = null;
+			if (input.trim().matches("[0-9]+")) {
+				long personId = Long.parseLong(input.trim());
+				person = addressBookService.getPerson(personId);
+			}
+			if (person != null) {
+				System.out.println(renderPerson(person));
+				ctx.setAttribute("personId", person.getId());
+				boolean done = false;
+				do {
+					done = new MenuActionSubmenu(new MenuDefinition(editPersonMenuItems)).perform(ctx);
+				} while (!done);
+				ctx.removeAttribute("personId");
+			} else {
+				System.out.println("Person not found.");
+			}
+
+			return false;
+		}));
 		menuItems.add(new MenuItem("Delete person", ctx -> {
 			System.out.print("Enter person ID: ");
 
@@ -82,43 +192,5 @@ public class AddressBook {
 		result.append(person.getLastName().trim());
 
 		return result.toString().trim();
-	}
-
-	private boolean doCommand(int command, Scanner scanner) {
-		switch (command) {
-			case 1:
-				addressBookService.listAllPersons().stream().map(p -> p.getId() + ": " + p.getFirstName() + " " + p.getLastName())
-						.forEach(System.out::println);
-			break;
-			case 2:
-			break;
-			case 3:
-				System.out.print("\nFirst name: ");
-				String fn = scanner.next();
-				System.out.print("\nLast name: ");
-				String ln = scanner.next();
-				System.out.print("\nMiddle name: ");
-				String mn = scanner.next();
-				System.out.print("\nPrefix name: ");
-				String pfx = scanner.next();
-				MutablePersonImpl person = MutablePersonImpl.builder().prefix(pfx).firstName(fn).middleName(mn).lastName(ln).build();
-				addressBookService.savePerson(person);
-			break;
-			case 4:
-			break;
-			case 5:
-				System.out.print("\nEnter ID of person to delete: ");
-				int id = scanner.nextInt();
-				if (addressBookService.deletePerson(id)) {
-					System.out.println("Delete successful.");
-				} else {
-					System.out.println("Person not found.");
-				}
-			break;
-			case 6:
-				return true;
-			default:
-		}
-		return false;
 	}
 }
